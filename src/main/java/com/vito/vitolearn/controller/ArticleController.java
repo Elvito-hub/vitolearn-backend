@@ -59,6 +59,15 @@ public class ArticleController {
         return comservice.getArticlesByCommunity(cm);
     }
 
+    @PostMapping(value="/searchArticle")
+    public List<Article> getArticlesByCommunity(@RequestParam String name){
+       // Long communityId = Long.valueOf(request.getParameter("community.communityId"));
+        Article cl = new Article();
+        System.out.println(name);
+        cl.setTitle(name);
+        return comservice.searchArticles(cl);
+    }
+
     @PostMapping(value = "/create",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
     produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> register(MultipartHttpServletRequest request) {

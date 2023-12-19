@@ -41,4 +41,9 @@ public class ArticleServiceImpl implements ArticleService {
     public List<Article> getArticlesByCommunity(Community cm){
         return articleRepository.findByCommunityId(cm);
     }
+
+    @Override
+    public List<Article> searchArticles(Article article){
+        return articleRepository.searchByName(article.getTitle());
+    }
 }

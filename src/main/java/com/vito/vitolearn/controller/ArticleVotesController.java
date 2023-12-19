@@ -1,6 +1,7 @@
 package com.vito.vitolearn.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,15 +46,20 @@ public class ArticleVotesController {
         return avImpl.getArticleVotesByArticle(cm);
     }
     
-    @PostMapping(value="/votearticle",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-    produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> votearticle(HttpServletRequest request){
-                System.out.println(request+" the creatoe");
+    @PostMapping(value="/votearticle")
+    public ResponseEntity<?> votearticle(@RequestParam("userId") Long creatorId,
+    @RequestParam("articleId") Long articleId,
+    @RequestParam("vote") Long vote,
+    @RequestParam("dateCreated") String dateCreated,
+    @RequestParam("comment") String comment
 
-        Long creatorId = Long.valueOf(request.getParameter("creator.userId"));
-        Long articleId = Long.valueOf(request.getParameter("article.articleId"));
-        Long vote = Long.valueOf(request.getParameter("vote"));
-        String dateCreated = request.getParameter("dateCreated");
+    ){
+               // System.out.println(request+" the creatoe");
+
+        // Long creatorId = Long.valueOf(request.getParameter("creator.userId"));
+        // Long articleId = Long.valueOf(request.getParameter("article.articleId"));
+        // Long vote = Long.valueOf(request.getParameter("vote"));
+        // String dateCreated = request.getParameter("dateCreated");
 
         Article exist = new Article();
         exist.setArticleId(articleId);
@@ -68,10 +74,16 @@ public class ArticleVotesController {
             return new ResponseEntity<>("User not found for the provided creatorId", HttpStatus.NOT_FOUND);
         }
         List<ArticleVotes> dbvotes =  avImpl.searchVote(article, creator);
+        List<ArticleVotes> filteredVotes = dbvotes.stream()
+        .filter(vote1 -> vote1.getVote() != null && (vote1.getVote() == 1 || vote1.getVote() == 2))
+        .collect(Collectors.toList());
 
-        if(dbvotes.size()>0){
-            avImpl.removeVote(dbvotes.get(0));
-            if(dbvotes.get(0).getVote()==vote){
+        System.out.println(vote.equals(Long.valueOf(3)));
+        System.out.println(dbvotes.size()>0 &&!dbvotes.get(0).getVote().equals(Long.valueOf(3)));
+
+        if(filteredVotes.size()>0 && !vote.equals(Long.valueOf(3)) && !filteredVotes.get(0).getVote().equals(Long.valueOf(3)) ){
+            avImpl.removeVote(filteredVotes.get(0));
+            if(filteredVotes.get(0).getVote()==vote){
                 return new ResponseEntity<List<ArticleVotes>>( avImpl.getArticleVotesByArticle(article), HttpStatus.OK);
             }
         }
@@ -80,6 +92,7 @@ public class ArticleVotesController {
         av.setCreator(creator);
         av.setDateCreated(dateCreated);
         av.setVote(vote);
+        av.setComment(comment);
         avImpl.addVote(av);
         return new ResponseEntity<List<ArticleVotes>>( avImpl.getArticleVotesByArticle(article), HttpStatus.OK);
     }

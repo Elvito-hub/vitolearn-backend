@@ -23,8 +23,11 @@ import com.vito.vitolearn.service.StorageService;
 import com.vito.vitolearn.service.implementation.CommunityServiceImpl;
 import com.vito.vitolearn.service.implementation.UserServiceImplementation;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
-@CrossOrigin(origins = "http://localhost:3002")
+@CrossOrigin(origins = "http://localhost:3002", allowCredentials = "true", maxAge = 3600, allowedHeaders = "*")
 @RequestMapping(value = "/community/",consumes = {MediaType.APPLICATION_JSON_VALUE},
         produces = {MediaType.APPLICATION_JSON_VALUE})
 public class CommunityController {
@@ -41,7 +44,18 @@ public class CommunityController {
     }
 
     @PostMapping("/getapproved")
-    public List<Community> getApprovedCommunites(){
+    public List<Community> getApprovedCommunites(HttpServletRequest request){
+
+            Cookie[] cookies = request.getCookies();
+            System.out.println(cookies);
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("token")) {
+                        String token = cookie.getValue();
+                        System.out.println(token);
+                    }
+                }
+            }
         return comservice.approvedCommunities();
     }
 

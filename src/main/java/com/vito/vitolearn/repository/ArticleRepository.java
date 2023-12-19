@@ -12,4 +12,7 @@ import com.vito.vitolearn.domain.Community;
 public interface ArticleRepository extends JpaRepository<Article,Long> {
     @Query("select s from Article s where s.community=:community")
     List<Article> findByCommunityId(@Param("community") Community cm);
+
+    @Query("select s from Article s where s.title LIKE ?1%")
+    List<Article> searchByName(String title);
 }

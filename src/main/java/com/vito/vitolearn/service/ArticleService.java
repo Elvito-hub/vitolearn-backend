@@ -11,4 +11,6 @@ public interface ArticleService {
     Article searchArticle(Article ar);
     List<Article> articles();
     List<Article> getArticlesByCommunity(Community cm);
+    List<Article> searchArticles(Article cm);
+
 }

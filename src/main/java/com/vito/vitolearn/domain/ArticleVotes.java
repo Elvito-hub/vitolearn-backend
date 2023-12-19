@@ -1,5 +1,6 @@
 package com.vito.vitolearn.domain;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +29,10 @@ public class ArticleVotes {
     @ManyToOne
     @JoinColumn(name = "article_id", referencedColumnName = "articleId") // Assuming userId is the primary key in User class
     private Article article;
+
+    @Nullable // Add this annotation to allow null values
+    private String comment;
+
 
     private String dateCreated;
     private Long vote;
